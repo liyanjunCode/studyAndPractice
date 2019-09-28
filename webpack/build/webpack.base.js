@@ -28,6 +28,22 @@ module.exports = env => {
                         'postcss-loader',
                         'sass-loader'
                     ]
+                },
+                {
+                    test: /\.jpe?g|png|gif/,
+                    use: [
+                        {
+                            loader: 'url-loader',
+                            options: {
+                                name: `image/[name][contenthash].ext`,
+                                limit: 10300
+                            }
+                        }
+                    ]
+                },
+                {
+                    test: /\.js$/,
+                    use: 'babel-loader'
                 }
             ]
         },
@@ -45,7 +61,9 @@ module.exports = env => {
                 title: "my App"
             }),
             new CleanWebpackPlugin(),
-            new MiniCssExtractPlugin()
+            new MiniCssExtractPlugin({
+                filename: "[name].[contenthash].css"
+            })
         ]
     }
     return isDev ? Merge(base, devConfig) : Merge(base, proConfig);

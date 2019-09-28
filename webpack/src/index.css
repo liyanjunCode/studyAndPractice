@@ -3,3 +3,6 @@ $color: red;
 div {
     color: $color;
 }
+p {
+    color: blue;
+}

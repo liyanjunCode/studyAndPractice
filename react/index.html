@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        #app{margin: 50px auto;width: 600px;}
+        fieldset{border: 1px solid purple;margin-bottom: 20px;}
+        fieldset input{width: 200px;height: 30px;margin: 10px 0;}
+        table{width: 600px;border: 2px solid purple;text-align: center;}
+        thead{background-color: purple;color: #fff;}
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel">
+        class App extends React.Component {
+            constructor (props) {
+                super(props);
+                this.state = {
+                    studentArr: [
+                        {name: '周杰伦', age: 30, gender: '男', phone: '18899989839'},
+                        {name: '谢霆锋', age: 40, gender: '男', phone: '18299839890'},
+                        {name: '刘德华', age: 50, gender: '男', phone: '18998938783'}
+                    ]
+                }
+            }
+            render() {
+                return (
+                    <div>
+                        <Add addList={this.addList}/>
+                        <List studentArr={this.state.studentArr} removeList={this.removeList}/>
+                    </div>
+                )
+            }
+            addList = (item) => {
+                let { studentArr } = this.state;
+                studentArr.unshift(item);
+                this.setState({
+                    studentArr
+                })
+            }
+            removeList = (index) => {
+                this.state.studentArr.splice(index, 1);
+                this.setState({
+                    studentArr: this.state.studentArr
+                })
+            }
+        }
+        class Add extends React.Component {
+            constructor(props) {
+                super(props);
+                this.nameInp = React.createRef();
+                this.ageInp = React.createRef();
+                this.sexInp = React.createRef();
+                this.phoneInp = React.createRef();
+            }
+            render () {
+                return (
+                    <div>
+                        <fieldset>
+                            <legend>撩课信息录入系统(React版)</legend>
+                            <div>
+                                <span>姓名: </span>
+                                <input ref={this.nameInp} type="text" placeholder="请输入姓名"/>
+                            </div>
+                            <div>
+                                <span>年龄: </span>
+                                <input ref={this.ageInp} type="text" placeholder="请输入年龄" />
+                            </div>
+                            <div>
+                                <span>性别: </span>
+                                <select ref={this.sexInp}>
+                                    <option value="男">男</option>
+                                    <option value="女">女</option>
+                                </select>
+                            </div>
+                            <div>
+                                <span>手机: </span>
+                                <input ref={this.phoneInp} type="text" placeholder="请输入手机号码" />
+                            </div>
+                            <button onClick={this.addAct}>创建新用户</button>
+                        </fieldset>
+
+                    </div>
+                )
+            }
+            addAct = () => {
+                this.props.addList({
+                    name: this.nameInp.current.value, 
+                    age:  this.ageInp.current.value, 
+                    gender: this.sexInp.current.value, 
+                    phone: this.phoneInp.current.value
+                })
+            }
+        }
+        class List extends React.Component {
+            render() {
+                const { studentArr } = this.props;
+                return (
+                    <div>
+                        <table>
+                            <thead>
+                            <tr>
+                                <td>姓名</td>
+                                <td>性别</td>
+                                <td>年龄</td>
+                                <td>手机</td>
+                                <td>删除</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {
+                                studentArr.map((item, i) => {
+                                    return (
+                                        <tr key={i}>
+                                            <td>{item.name}</td>
+                                            <td>{item.gender}</td>
+                                            <td>{item.age}</td>
+                                            <td>{item.phone}</td>
+                                            <td>
+                                                <button onClick={(i) => {this.props.removeList(i)}}>删除</button>
+                                            </td>
+                                        </tr>
+                                    )
+                                })
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                )
+            }
+        }
+        ReactDOM.render(<App/>, document.getElementById('app'))
+    </script>
+</body>
+</html>

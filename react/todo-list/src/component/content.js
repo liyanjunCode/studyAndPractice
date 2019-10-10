@@ -1,24 +1,30 @@
 import React, { Component } from 'react'
-
+import PropTypes from 'prop-types'
 export default class Main extends Component {
+    static propTypes = {
+        todos: PropTypes.array.isRequired,
+        changeFinished: PropTypes.func.isRequired,
+        deleteList: PropTypes.func.isRequired
+    };
     render() {
+        const { todos, deleteList } = this.props;
         return (
-            <ul class="todo-main">
-                <li>
-                <label>
-                    <input type="checkbox"/>
-                    <span>Vue-拼多多项目实战-课程讲解</span>
-                </label>
-                <button class="btn btn-warning" style="display:none">删除</button>
-                </li>
-                <li>
-                <label>
-                    <input type="checkbox"/>
-                    <span>Vue-拼多多项目实战-作业布置</span>
-                </label>
-                <button class="btn btn-warning" style="display:none">删除</button>
-                </li>
+            <ul className="todo-main">
+                {
+                    todos.map((item, index) => (
+                        <li key={index}>
+                            <label>
+                                <input type="checkbox" checked={item.finished} onChange={(ev) => this._changeStatus(ev, item.id)}/>
+                                <span>{item.title}</span>
+                            </label>
+                            <button className="btn btn-warning" onClick={() => deleteList(index)}>删除</button>
+                        </li>
+                    ))
+                }
             </ul>
         )
+    }
+    _changeStatus(ev, id) {
+        this.props.changeFinished(id, ev.target.checked);
     }
 }

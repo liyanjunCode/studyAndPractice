@@ -3,12 +3,14 @@ import HeadCom from './component/head.js'
 import Main from './component/content.js'
 import Foot from './component/foot.js'
 import { initList } from './store/actionCreators'
+import store from './store/index.js';
 class App extends Component {
     constructor(props) {
         super(props);   
     }
     componentWillMount () {
-        initList()
+        const action = initList();
+        store.dispatch(action)
     }
     render() {
         return (

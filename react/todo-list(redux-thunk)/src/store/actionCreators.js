@@ -35,16 +35,14 @@ const initList = () => {
         {id: 3, title: '看一小时Java的课程', finished: false},
         {id: 4, title: '看一小时Python的课程', finished: false}
     ]
-   return (dispatch) => {
-    setTimeout(() => {
-        console.log(1111)
-        dispatch({
-            type: INIT_LIST_ITEM,
-            list
-        })
-    }, 1000)
-    console.log(111)
-   }
+    return (dispatch) => {
+        setTimeout(() => {
+            dispatch({
+                type: INIT_LIST_ITEM,
+                list
+            })
+        }, 1000)
+    }
 }
 export {
     deleteListItem,

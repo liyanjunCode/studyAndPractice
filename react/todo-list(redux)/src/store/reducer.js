@@ -1,6 +1,8 @@
 import { DELETE_LIST_ITEM, 
     CHANGE_LIST_STATUS,
-    ADD_LIST_ITEM
+    ADD_LIST_ITEM,
+    CHECK_ALL_ITEM,
+    SELECT_ALL_ITEM
  } from './actionTypes'
 
 let defaultState = {
@@ -38,8 +40,48 @@ export default (state = defaultState, action) => {
         return newState
     }
     if (action.type ===  ADD_LIST_ITEM) {
-        console.log(111)
+        let newState = JSON.parse(JSON.stringify(state));
+        const len = newState.todos.length;
+        newState.todos.push({
+            id:  len === 0 ? 1 : newState.todos[len-1]['id'] + 1, 
+            title: action.text,
+            finished: false
+        });
+        return newState;
     }
-   
+    if (action.type ===  CHECK_ALL_ITEM) {
+        let newState = JSON.parse(JSON.stringify(state));
+        const notFinish = [];
+        let finishedCount = 0;
+        newState.todos.forEach((item) => {
+            if (!item.finished) {
+                notFinish.push(item);
+            }
+        })
+        notFinish.forEach((item) => {
+            if (item.finished) {
+                finishedCount++;
+            }
+        })
+        newState.todos = notFinish;
+        newState.finishedCount = finishedCount;
+        newState.allChecked = false;
+        return newState;
+    }
+
+    if (action.type ===  SELECT_ALL_ITEM) {
+        let newState = JSON.parse(JSON.stringify(state));
+        newState.todos.forEach((item) => {
+            if (action.flag) {
+                item.finished = true;
+            } else {
+                item.finished = false
+            }
+            
+        })
+        newState.finishedCount = action.flag ? newState.todos.length : 0;
+        newState.allChecked = action.flag;
+        return newState;
+    }
     return state
 }

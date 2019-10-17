@@ -16,54 +16,14 @@ class App extends Component {
             allChecked: false
         }
     }
-    _addItem = (item) => {
-        this.state.todos.push(item);
-        this.setState({
-            todos: this.state.todos
-        })
-    }
-    _clearFinished = () => {
-        const notFinish = [];
-        let finishedCount = 0;
-        this.state.todos.forEach((item) => {
-            if (!item.finished) {
-                notFinish.push(item);
-            }
-        })
-        notFinish.forEach((item) => {
-            if (item.finished) {
-                finishedCount++;
-            }
-        })
-        this.setState({
-            todos: notFinish,
-            finishedCount,
-            allChecked: false
-        })
-    }
-    _selectAll = (ev) => {
-        this.state.todos.forEach((item) => {
-            if (ev.target.checked) {
-                item.finished = true;
-            } else {
-                item.finished = false;
-            }
-            
-        })
-        this.setState({
-            todos: this.state.todos,
-            finishedCount :  ev.target.checked ? this.state.todos.length : 0,
-            allChecked: ev.target.checked
-        })
-    }
     render() {
         return (
             <div className="todo-container">
             <div className="todo-wrap">
-            {/* addItem={this._addItem} prevId={this.state.todos.length ? this.state.todos.length : 0 } */}
                 <HeadCom/>
                 <Main/>
-                <Foot allChecked={this.state.allChecked} finishedCount={this.state.finishedCount} totalNum={this.state.todos.length} clearFinished={this._clearFinished} selectAll={this._selectAll}/>
+                {/* allChecked={this.state.allChecked} finishedCount={this.state.finishedCount} totalNum={this.state.todos.length} clearFinished={this._clearFinished} selectAll={this._selectAll} */}
+                <Foot/>
             </div>
         </div>
         );

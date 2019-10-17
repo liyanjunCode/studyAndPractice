@@ -12,14 +12,15 @@ export default class HeadCom extends Component {
     render() {
         return (
             <div className="todo-header">
-                <input type="text" placeholder="请输入今天的任务清单，按回车键确认" onKeyDown={(ev) => this._additemDetail(ev, this.props.prevId)}/>
+                <input type="text" placeholder="请输入今天的任务清单，按回车键确认" onKeyDown={(ev) => this._additemDetail(ev)}/>
             </div>
         )
     }
-    _additemDetail(ev, prevId) {
+    _additemDetail(ev) {
         if (ev.target.value) {
             if(ev.keyCode === 13) {
-                addItemList({id: prevId + 1, title: ev.target.value, finished: false}) 
+               const action =  addItemList(ev.target.value);
+               store.dispatch(action)
             }
         }
     }

@@ -6,18 +6,19 @@ export const emptyObject = Object.freeze({})
 
 // These helpers produce better VM code in JS engines due to their
 // explicitness and function inlining.
+// 是undefined或null
 export function isUndef (v: any): boolean %checks {
   return v === undefined || v === null
 }
-
+// 不是undefined， 不是null
 export function isDef (v: any): boolean %checks {
   return v !== undefined && v !== null
 }
-
+// 如果是ture
 export function isTrue (v: any): boolean %checks {
   return v === true
 }
-
+// 如果是false
 export function isFalse (v: any): boolean %checks {
   return v === false
 }
@@ -173,6 +174,7 @@ export const camelize = cached((str: string): string => {
 /**
  * Capitalize a string.
  */
+// 首字母转为大写
 export const capitalize = cached((str: string): string => {
   return str.charAt(0).toUpperCase() + str.slice(1)
 })
@@ -180,6 +182,7 @@ export const capitalize = cached((str: string): string => {
 /**
  * Hyphenate a camelCase string.
  */
+// 将驼峰转为-连接
 const hyphenateRE = /\B([A-Z])/g
 export const hyphenate = cached((str: string): string => {
   return str.replace(hyphenateRE, '-$1').toLowerCase()
@@ -194,6 +197,7 @@ export const hyphenate = cached((str: string): string => {
  */
 
 /* istanbul ignore next */
+// 不支持原生bind 就需要兼容
 function polyfillBind (fn: Function, ctx: Object): Function {
   function boundFn (a) {
     const l = arguments.length
@@ -207,7 +211,7 @@ function polyfillBind (fn: Function, ctx: Object): Function {
   boundFn._length = fn.length
   return boundFn
 }
-
+// 原生bind方法
 function nativeBind (fn: Function, ctx: Object): Function {
   return fn.bind(ctx)
 }
@@ -219,6 +223,7 @@ export const bind = Function.prototype.bind
 /**
  * Convert an Array-like object to a real Array.
  */
+// 将类数组转为数组
 export function toArray (list: any, start?: number): Array<any> {
   start = start || 0
   let i = list.length - start
@@ -232,6 +237,7 @@ export function toArray (list: any, start?: number): Array<any> {
 /**
  * Mix properties into target object. (将目标对象的key：value合并到原始对象中)
  */
+// 将后面的对象混入前面的对象中
 export function extend (to: Object, _from: ?Object): Object {
   for (const key in _from) {
     to[key] = _from[key]
@@ -242,6 +248,7 @@ export function extend (to: Object, _from: ?Object): Object {
 /**
  * Merge an Array of Objects into a single Object.
  */
+// 将数组中的对象转为简单的对象
 export function toObject (arr: Array<any>): Object {
   const res = {}
   for (let i = 0; i < arr.length; i++) {
@@ -336,6 +343,7 @@ export function looseIndexOf (arr: Array<mixed>, val: mixed): number {
 /**
  * Ensure a function is called only once.
  */
+// 确保函数只调用一次
 export function once (fn: Function): Function {
   let called = false
   return function () {

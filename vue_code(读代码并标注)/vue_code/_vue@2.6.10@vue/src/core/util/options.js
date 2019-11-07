@@ -31,8 +31,10 @@ const strats = config.optionMergeStrategies
 /**
  * Options with restrictions
  */
+// strats 格式类型是由限制的 这个是默认的合并策略
 if (process.env.NODE_ENV !== 'production') {
   strats.el = strats.propsData = function (parent, child, vm, key) {
+    // 开发中如果不存在vm则报警 但不影响合并
     if (!vm) {
       warn(
         `option "${key}" can only be used during instance ` +
@@ -46,10 +48,11 @@ if (process.env.NODE_ENV !== 'production') {
 /**
  * Helper that recursively merges two data objects together.
  */
+// 递归的将data合并到一起
 function mergeData (to: Object, from: ?Object): Object {
-  if (!from) return to
+  if (!from) return to  // 不存在from参数直接返回to
   let key, toVal, fromVal
-
+// 获取第二个参数对象from的键数组
   const keys = hasSymbol
     ? Reflect.ownKeys(from)
     : Object.keys(from)
@@ -57,11 +60,15 @@ function mergeData (to: Object, from: ?Object): Object {
   for (let i = 0; i < keys.length; i++) {
     key = keys[i]
     // in case the object is already observed...
+    // 如果数据已经是响应式的了， 就跳过， 说明已经处理过了
     if (key === '__ob__') continue
     toVal = to[key]
     fromVal = from[key]
+    // 如果to中没有当前key， 直接将 from的键值合并到to中
     if (!hasOwn(to, key)) {
       set(to, key, fromVal)
+      // 如果当前key值在to和from中都有，并且他们还都是对象
+      // 需要递归去合并
     } else if (
       toVal !== fromVal &&
       isPlainObject(toVal) &&
@@ -70,20 +77,23 @@ function mergeData (to: Object, from: ?Object): Object {
       mergeData(toVal, fromVal)
     }
   }
+  //返回合并后的data to
   return to
 }
 
 /**
  * Data
  */
+// 合并data是函数的情况
 export function mergeDataOrFn (
   parentVal: any,
   childVal: any,
   vm?: Component
 ): ?Function {
+  // vm不存在就是组件， data是函数形式
   if (!vm) {
     // in a Vue.extend merge, both should be functions
-    // 两个都得是函数， 其中一个不是就直接退出， 不执行
+    // 两个都得是函数， 其中一个不存在就直接返回存在的退出， 不执行
     if (!childVal) {
       return parentVal
     }
@@ -95,12 +105,16 @@ export function mergeDataOrFn (
     // merged result of both functions... no need to
     // check if parentVal is a function here because
     // it has to be a function to pass previous merges.
+    // 如果是函数， 就先执行获取对象数据
+    // 然后用mergeData进行数据合并
     return function mergedDataFn () {
       return mergeData(
         typeof childVal === 'function' ? childVal.call(this, this) : childVal,
         typeof parentVal === 'function' ? parentVal.call(this, this) : parentVal
       )
     }
+     // vm存在就是根页面，如果childval存在， 就进行合并数据
+     // childval不存在， 就返回默认的数据
   } else {
     return function mergedInstanceDataFn () {
       // instance merge
@@ -118,7 +132,9 @@ export function mergeDataOrFn (
     }
   }
 }
-
+// 此处应该是对组件和根组件得判断
+// 如果不存在vm则是组件， 那么他的data需要是函数， 然后进行数据合并
+// 如果存在vm说明他不是组件，是根页面直接合并
 strats.data = function (
   parentVal: any,
   childVal: any,
@@ -144,10 +160,14 @@ strats.data = function (
 /**
  * Hooks and props are merged as arrays.
  */
+// 把钩子函数和props合并为数组
 function mergeHook (
   parentVal: ?Array<Function>,
   childVal: ?Function | ?Array<Function>
 ): ?Array<Function> {
+  // 如果childVal不存在， 就直接返回parentVal
+  //如果childVal存在， 判断parentVal存不存在， 存在 合并parentVal 和childVal
+  // 如果childVal存在， 判断parentVal不存在， 判断childVal是不是数组， 是数组直接返回，不是数组， 转为数组形式
   const res = childVal
     ? parentVal
       ? parentVal.concat(childVal)
@@ -155,11 +175,12 @@ function mergeHook (
         ? childVal
         : [childVal]
     : parentVal
+    // res存在 就需要进行合并去重
   return res
     ? dedupeHooks(res)
     : res
 }
-
+// 将钩子函数合并去重,
 function dedupeHooks (hooks) {
   const res = []
   for (let i = 0; i < hooks.length; i++) {
@@ -262,6 +283,7 @@ strats.provide = mergeDataOrFn
 /**
  * Default strategy.
  */
+// 默认合并策略， 如果无子options就返回父options 否则返回子
 const defaultStrat = function (parentVal: any, childVal: any): any {
   return childVal === undefined
     ? parentVal
@@ -427,7 +449,9 @@ export function mergeOptions (
   // but only if it is a raw options object that isn't
   // the result of another mergeOptions call.
   // Only merged options has the _base property.
+  //当前有_base属性 就进行extends和mixins合并
   if (!child._base) {
+    // 如果当前实例有extends选项，取出所有的extends选项混入到开发者写的options中
     if (child.extends) {
       parent = mergeOptions(parent, child.extends, vm)
     }
@@ -449,10 +473,12 @@ export function mergeOptions (
       mergeField(key)
     }
   }
+  // 合并props data methods watch computed collhook 等 strats[key]是事先定义好的合并函数
   function mergeField (key) {
     const strat = strats[key] || defaultStrat
     options[key] = strat(parent[key], child[key], vm, key)
   }
+  // 将合并后的对象返回出去
   return options
 }
 

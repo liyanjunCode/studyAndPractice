@@ -10,11 +10,16 @@ import {
 import { updateListeners } from '../vdom/helpers/index'
 
 export function initEvents (vm: Component) {
+  // 初始化一个无原型链干净的_events对象
   vm._events = Object.create(null)
+  // 是否在父组件中直接对子组件进行钩子函数进行绑定
+  // 如果绑定了钩子函数， 会在钩子函数中判断_hasHookEvent 是否存在
+  // 钩子函数存在则执行（正常的钩子函数是循环执行相应的钩子数组）
   vm._hasHookEvent = false
   // init parent attached events
   
   // 如果监听了，绑定更新vdom
+  // listeners是父组件通过@直接绑定在当前组件的方法列表
   const listeners = vm.$options._parentListeners
   if (listeners) {
     updateComponentListeners(vm, listeners)
@@ -40,7 +45,7 @@ function createOnceHandler (event, fn) {
     }
   }
 }
-
+// 更新绑定的事件
 export function updateComponentListeners (
   vm: Component,
   listeners: Object,

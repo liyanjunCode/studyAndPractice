@@ -67,7 +67,7 @@ export function initMixin (Vue: Class<Component>) {
     // 调用生命周期函数beforeCreate
     callHook(vm, 'beforeCreate') 
     
-    
+    // inject初始注入， 
     initInjections(vm) // resolve injections before data/props  // 初始化注入
 
     // vm 为当前 Vue 实例，Vue 会将我们传入的 data 属性赋值给 vm._data

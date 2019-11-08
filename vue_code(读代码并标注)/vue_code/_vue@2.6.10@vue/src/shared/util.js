@@ -26,6 +26,7 @@ export function isFalse (v: any): boolean %checks {
 /**
  * Check if value is primitive.
  */
+// 检查是否是初始值
 export function isPrimitive (value: any): boolean %checks {
   return (
     typeof value === 'string' ||

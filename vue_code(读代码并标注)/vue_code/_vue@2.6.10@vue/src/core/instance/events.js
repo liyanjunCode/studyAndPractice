@@ -22,6 +22,7 @@ export function initEvents (vm: Component) {
   // listeners是父组件通过@直接绑定在当前组件的方法列表
   const listeners = vm.$options._parentListeners
   if (listeners) {
+    // 取出在父级绑定在本组件上的事件函数列表， 进行事件更新
     updateComponentListeners(vm, listeners)
   }
 }
@@ -35,7 +36,7 @@ function add (event, fn) {
 function remove (event, fn) {
   target.$off(event, fn)
 }
-
+// 订阅只执行一次就解绑， 相当于$once
 function createOnceHandler (event, fn) {
   const _target = target
   return function onceHandler () {

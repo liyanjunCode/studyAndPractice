@@ -26,7 +26,9 @@ export function initRender (vm: Component) {
   const options = vm.$options
   const parentVnode = vm.$vnode = options._parentVnode // the placeholder node in parent tree
   const renderContext = parentVnode && parentVnode.context
+  // 解析slot插槽， 存入$slots对象中
   vm.$slots = resolveSlots(options._renderChildren, renderContext)
+  // 定义一个被冻结的对象
   vm.$scopedSlots = emptyObject
   // bind the createElement fn to this instance
   // so that we get proper render context inside it.
@@ -40,9 +42,12 @@ export function initRender (vm: Component) {
 
   // $attrs & $listeners are exposed for easier HOC creation.
   // they need to be reactive so that HOCs using them are always updated
+  //获取到父组件的虚拟dom的属性， 因为$attrs和$listeners， 要看父组件中是否定义了这两项
+  // 好进行处理
   const parentData = parentVnode && parentVnode.data
 
   /* istanbul ignore else */
+  // 这里处理 $attrs和 $listeners ,在开发环境和正式环境进行区别， 测试环境
   if (process.env.NODE_ENV !== 'production') {
     defineReactive(vm, '$attrs', parentData && parentData.attrs || emptyObject, () => {
       !isUpdatingChildComponent && warn(`$attrs is readonly.`, vm)

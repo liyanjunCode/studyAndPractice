@@ -10,7 +10,7 @@ import {
   isTrue,
   isPlainObject
 } from 'shared/util'
-
+// 检查前缀是~\&\!等， 取出事件名和前缀
 const normalizeEvent = cached((name: string): {
   name: string,
   once: boolean,
@@ -59,15 +59,21 @@ export function updateListeners (
   vm: Component
 ) {
   let name, def, cur, old, event
+  // 循环绑定的事件函数列表
   for (name in on) {
+    // 取出新的事件列表中事件
     def = cur = on[name]
+    // 取出旧的事件
     old = oldOn[name]
+    // 返回的对象中有事件名称和前缀
     event = normalizeEvent(name)
     /* istanbul ignore if */
+    // 感觉这是weex的执行逻辑
     if (__WEEX__ && isPlainObject(def)) {
       cur = def.handler
       event.params = def.params
     }
+    // 如果cur是undefined 说明 没事件， 在开发环境要警告
     if (isUndef(cur)) {
       process.env.NODE_ENV !== 'production' && warn(
         `Invalid handler for event "${event.name}": got ` + String(cur),

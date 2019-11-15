@@ -25,11 +25,13 @@ export function validateProp (
   vm?: Component
 ): any {
   const prop = propOptions[key]
+  // 判断对象上是否有key这个属性
   const absent = !hasOwn(propsData, key)
   let value = propsData[key]
   // boolean casting
   const booleanIndex = getTypeIndex(Boolean, prop.type)
   if (booleanIndex > -1) {
+    // $options上没有当前key值 并且没有定义default
     if (absent && !hasOwn(prop, 'default')) {
       value = false
     } else if (value === '' || value === hyphenate(key)) {
@@ -64,6 +66,7 @@ export function validateProp (
 /**
  * Get the default value of a prop.
  */
+// 获取一个默认的prop数据值
 function getPropDefaultValue (vm: ?Component, prop: PropOptions, key: string): any {
   // no default, return undefined
   if (!hasOwn(prop, 'default')) {
@@ -179,6 +182,7 @@ function assertType (value: any, type: Function): {
  * because a simple equality check will fail when running
  * across different vms / iframes.
  */
+// 匹配出函数名
 function getType (fn) {
   const match = fn && fn.toString().match(/^\s*function (\w+)/)
   return match ? match[1] : ''
@@ -189,9 +193,11 @@ function isSameType (a, b) {
 }
 
 function getTypeIndex (type, expectedTypes): number {
+  // props中通过key取值 不是数组的情况
   if (!Array.isArray(expectedTypes)) {
     return isSameType(expectedTypes, type) ? 0 : -1
   }
+  // props中通过key取值 是数组的情况
   for (let i = 0, len = expectedTypes.length; i < len; i++) {
     if (isSameType(expectedTypes[i], type)) {
       return i

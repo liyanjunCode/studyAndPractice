@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "发现首页",
+  "usingComponents": {
+    "index-tab": "/pages/index/components/indexTab"
+  }
+}

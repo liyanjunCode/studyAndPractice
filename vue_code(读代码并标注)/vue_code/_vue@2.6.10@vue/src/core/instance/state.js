@@ -78,7 +78,7 @@ export function initState (vm: Component) {
     initWatch(vm, opts.watch)
   }
 }
-
+// 初始化props
 function initProps (vm: Component, propsOptions: Object) {
   const propsData = vm.$options.propsData || {}
   const props = vm._props = {}
@@ -92,6 +92,7 @@ function initProps (vm: Component, propsOptions: Object) {
   }
   for (const key in propsOptions) {
     keys.push(key)
+    // 验证props并得到设置得默认值
     const value = validateProp(key, propsOptions, propsData, vm)
     /* istanbul ignore else */
     if (process.env.NODE_ENV !== 'production') {
@@ -115,18 +116,21 @@ function initProps (vm: Component, propsOptions: Object) {
         }
       })
     } else {
+      // 将props定义为响应式数据， 随后更改会自动变更
       defineReactive(props, key, value)
     }
     // static props are already proxied on the component's prototype
     // during Vue.extend(). We only need to proxy props defined at
     // instantiation here.
+    // 响应式数据建立后， 将 props全都改在vm上，便于使用
     if (!(key in vm)) {
       proxy(vm, `_props`, key)
     }
   }
+  // 开启响应式数据建立(针对于根组件youxiao )
   toggleObserving(true)
 }
-
+// 初始化数据为响应式数据
 function initData (vm: Component) {
   let data = vm.$options.data
 
@@ -287,7 +291,7 @@ function createGetterInvoker(fn) {
     return fn.call(this, this)
   }
 }
-
+// 将函数方法挂在实例上, 方便访问
 function initMethods (vm: Component, methods: Object) {
   const props = vm.$options.props
   for (const key in methods) {

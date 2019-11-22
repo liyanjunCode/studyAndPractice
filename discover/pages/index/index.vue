@@ -28,7 +28,6 @@
 
 		},
 		mounted(){
-			console.log(this.tabList, 111)
 		}
 	}
 </script>

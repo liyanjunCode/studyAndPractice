@@ -20,7 +20,16 @@
 			])
 		},
 		mounted() {
-			console.log(this.tabList, 2222)
+			wx.cloud.init()
+			wx.cloud.callFunction({
+				name: 'tabList',
+				success: function(res) {
+					console.log(res.result, 1112234)
+				},
+				fail: function() {
+					
+				}
+			})
 		}
 	}
 </script>

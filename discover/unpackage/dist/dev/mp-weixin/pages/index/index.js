@@ -163,7 +163,6 @@ var _vuex = __webpack_require__(/*! vuex */ 16);function _objectSpread(target) {
 
 
   mounted: function mounted() {
-    console.log(this.tabList, 111);
   } };exports.default = _default;
 
 /***/ }),

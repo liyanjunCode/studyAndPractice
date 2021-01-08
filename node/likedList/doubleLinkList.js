@@ -33,20 +33,32 @@ class LikeList {
       index = this.size;
     }
     this.limit(index);
-    // 如果index是0，直接获取head
-    // 如果index不是0，需要先查找上一个元素节点
-    if (index == 0) {
-      const newNode = new Node(element, this.head.prev, this.head);
-      if (this.head == null || this.head.next == null) {
-        this.tail.prev = this.head;
-        this.head = newNode;
+    // 在尾部添加， 需要处理tail指向
+    if (this.size === index) {
+      const oldTail = this.tail;
+      // 向最后插入，老的尾部是新节点的前一个，头部是新节点的下一个
+      this.tail = new Node(element, oldTail, this.head);
+      if (oldTail == null) {
+        this.head = this.tail;
+        this.tail.next = this.tail;
+        this.tail.prev = this.tail;
       } else {
-
+        oldTail.next = this.tail;
+        this.head.prev = this.tail;
       }
-
-    } else {
-      const prevNode = this.getNode(index - 1);
-      prevNode.next = new Node(element, prevNode.next);
+    } else {// 这个判断链表至少有一个元素，因为链表为空时 this.size === index
+      // 不在尾部添加
+      // 首先获取要插入位置的原有节点,原有位置的节点需要向后 移动一位当成下一个节点
+      const nextNode = this.getNode(index);
+      //根据查找的节点获取到当前节点的上一个节点，位置不动
+      const prveNode = nextNode.prev;
+      const newNode = new Node(element, prveNode, nextNode);
+      prveNode.next = newNode;
+      nextNode.prve = newNode;
+      if (index == 0) {
+        // 当index为0时，是像头部插入，需要改变head指针
+        this.head = newNode;
+      }
     }
     // 添加完size要加1
     this.size++;
@@ -60,13 +72,32 @@ class LikeList {
   // 链表删除元素
   remove (index) {
     this.limit(index);
-    if (index === 0) {
-      this.head = this.head.next;
+    // if (index === 0) {
+    //   this.head = this.head.next;
+    // } else {
+    //   const prevNode = this.getNode(index - 1);
+    //   prevNode.next = prevNode.next.next;
+    // }
+    if (this.size == 1) {
+      this.head = null;
+      this.tail = null;
+      this.size = 0;
     } else {
-      const prevNode = this.getNode(index - 1);
-      prevNode.next = prevNode.next.next;
+      const curNode = this.getNode(index);
+      const prevNode = curNode.prev;
+      const nextNode = curNode.next;
+      prevNode.next = nextNode;
+      nextNode.prev = prevNode;
+
+      if (this.size == index - 1) {
+        this.tail = prevNode;
+      }
+      if (index == 0) {
+        this.head = nextNode;
+      }
+      this.size--;
     }
-    this.size--;
+
   }
   get (index) {
     return this.getNode(index);
@@ -115,13 +146,13 @@ class LikeList {
   // }
 }
 const list = new LikeList();
-// list.add("a");
+list.add("a");
 // list.add("b");
 // list.add("c");
 
 // // list.add(2, "ff")
 // // list.set(4, "dd");
-// list.remove(0)
-// console.dir(list, { depth: 200 })
+list.remove(0)
+console.dir(list, { depth: 200 })
 
-console.dir(list.reverseLink(), { depth: 200 })
+// console.dir(list.reverseLink(), { depth: 200 })

@@ -1,0 +1,21 @@
+{
+  "name": "serverjs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "bin": {
+    "serve1": "./bin/www.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "commander": "^7.0.0",
+    "mime": "^2.5.0"
+  }
+}

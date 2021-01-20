@@ -1,13 +1,26 @@
 #!/usr/bin/env node
-const {program } = require("commander");
+const { program } = require("commander");
 const chalk = require("chalk");
-program.version('1.0.0');
-program.option('-p, --port <type>')
-.option('-h, --host <type>')
-.option('-d, --dir <type>');
+const { Serve } = require("../src/server");
+const { config } = require("./config");
+const { vesion } = require("../package.json");
+program.version(vesion);
+program
+    .name("my-command")
+    .usage("[global options] command")
+Object.values(config).forEach(item => {
+    program.option(item.options, item.des)
+    program.addHelpText('after', "jdh")
+})
+program.on("help", function (ss) {
+    console.log(ss, "soossk")
+})
 program.parse(process.args);
 const options = program.opts();
-console.log(options.port,options.host,options.dir );
 
-const serve = new Serve({});
-serve.start()
+const configs = {};
+Object.keys(config).forEach(key => {
+    configs[key] = options[key] || config[key].default
+})
+const servers = new Serve(configs);
+servers.start()

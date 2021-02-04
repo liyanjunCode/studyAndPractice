@@ -20,5 +20,8 @@ Layer.prototype.match = function (path) {
 Layer.prototype.handle_request = function (req, res, next) {
     this.handler(req, res, next);
 }
-
+Layer.prototype.handle_error = function (err, req, res, next) {
+    console.log(err, "2222")
+    this.handler(err, req, res, next);
+}
 module.exports = Layer

@@ -14,10 +14,10 @@ app.get("/b", (req, res) => {
     console.log('c')
     res.end('is b')
 })
-// , function () {
-//     console.log(222)
-//     res.end("is ok")
-// }
+app.use((err, req, res, next) => {
+    // console.log("中间件报错", err)
+    next("998773")
+})
 app.listen(8080, () => {
     console.log("server is running")
 })

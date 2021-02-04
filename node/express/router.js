@@ -23,25 +23,37 @@ methods.forEach(method => {
 Router.prototype.handle = function (req, res, out) {
     const { pathname } = url.parse(req.url, true);
     let idx = 0;
-    const next = () => {
+    const next = (err) => {
         if (idx >= this.stack.length) { return out() }
         const layer = this.stack[idx++];
-        if (layer.match(pathname)) {
-            if (!layer.route) {
-                // 不存在 就是处理中间件,中间件没有route
-                layer.handle_request(req, res, next)
+        // 因为是路由下处理函数数组的具体处理，
+        // 所以需要处理中间件和处理函数的不同
+        // 中间件有专门的错误处理函数
+        if (err) {
+            if (layer.route) {
+                next(err)
             } else {
-                // 方法type不正确就查找下一个
-                if (layer.route.methods[req.method.toLowerCase()]) {
-                    // route 存在route是正常方法请求处理
+                console.log(111111111111)
+                console.log(next, "next", err)
+                layer.handle_error(err, req, res, next)
+            }
+        } else {
+            if (layer.match(pathname)) {
+                if (!layer.route) {
+                    // 不存在 就是处理中间件,中间件没有route
                     layer.handle_request(req, res, next)
                 } else {
-                    next();
+                    // 方法type不正确就查找下一个
+                    if (layer.route.methods[req.method.toLowerCase()]) {
+                        // route 存在route是正常方法请求处理
+                        layer.handle_request(req, res, next)
+                    } else {
+                        next();
+                    }
                 }
+            } else {
+                next();
             }
-
-        } else {
-            next();
         }
     }
     next()
@@ -49,7 +61,7 @@ Router.prototype.handle = function (req, res, out) {
 // 中间件只存在一个函数
 Router.prototype.use = function (path, handler) {
     if (typeof path == "function") {
-        handlers = path;
+        handler = path;
         path = '/';
     }
     const layer = new Layer(path, handler);

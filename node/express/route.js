@@ -18,7 +18,8 @@ methods.forEach(method => {
 
 Route.prototype.dispatch = function (req, res, out) {
     let idx = 0;
-    const next = () => {
+    const next = (err) => {
+        if (err) { return out(err); }
         if (idx >= this.stack.length) { return out() }
         const layer = this.stack[idx++];
         if (req.method.toLowerCase() === layer.method) {
